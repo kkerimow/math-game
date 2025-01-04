@@ -1,3 +1,13 @@
+// Backend URL'ini al
+const getBackendUrl = () => {
+    if (window.__env__ && window.__env__.BACKEND_URL) {
+        console.log('Using backend URL from env:', window.__env__.BACKEND_URL);
+        return window.__env__.BACKEND_URL;
+    }
+    console.log('Using default backend URL: http://localhost:5000');
+    return 'http://localhost:5000';
+};
+
 async function handleSignUp(event) {
     event.preventDefault();
 
@@ -12,9 +22,10 @@ async function handleSignUp(event) {
     }
 
     const userData = { username: name, email, password };
-    const BACKEND_URL = window.__env__?.BACKEND_URL || 'http://localhost:5000';
+    const BACKEND_URL = getBackendUrl();
 
     try {
+        console.log('Sending signup request to:', `${BACKEND_URL}/api/users/register`);
         const response = await fetch(`${BACKEND_URL}/api/users/register`, {
             method: 'POST',
             headers: {
@@ -39,7 +50,10 @@ async function handleSignUp(event) {
 document.addEventListener('click', (event) => {
     if (event.target.classList.contains('signupBtn')) {
         const form = document.getElementById('register-form');
-        form.addEventListener('submit', handleSignUp);
+        if (form) {
+            form.removeEventListener('submit', handleSignUp);
+            form.addEventListener('submit', handleSignUp);
+        }
     }
 });
 
@@ -48,10 +62,10 @@ async function handleLogin(event) {
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const BACKEND_URL = window.__env__?.BACKEND_URL || 'http://localhost:5000';
+    const BACKEND_URL = getBackendUrl();
 
     try {
-        console.log('Sending login request...');
+        console.log('Sending login request to:', `${BACKEND_URL}/api/users/login`);
         const response = await fetch(`${BACKEND_URL}/api/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,7 +81,7 @@ async function handleLogin(event) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('username', data.username);
                 window.location.href = `index2.html?username=${data.username}`;
-                console.log(data.username);
+                console.log('Username stored:', data.username);
             } else {
                 alert('No token received. Please try again.');
             }
@@ -84,6 +98,7 @@ document.addEventListener('click', (event) => {
     if (event.target.classList.contains('loginBtn')) {
         const form = document.getElementById('login-form');
         if (form) {
+            form.removeEventListener('submit', handleLogin);
             form.addEventListener('submit', handleLogin);
         }
     }
