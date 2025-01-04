@@ -1,0 +1,12 @@
+{
+  "name": "math-game-frontend",
+  "version": "1.0.0",
+  "description": "Math Game Frontend",
+  "scripts": {
+    "start": "serve -s .",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+} 
